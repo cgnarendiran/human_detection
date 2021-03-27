@@ -1,10 +1,10 @@
 # Human Detection in Aerial Video (NRT)
 
 This project is submmitted as part of the evaluation for Senior Machine Learning Engineer Test for NRT.
-The goal of the project is to process a video file, detect humans using a CNN/DNN model.
+The goal of the project is to process a video file and detect humans using a CNN/DNN model.
 
-The code is written in python and PyTorch 1.7 is utilized. Although a lot of open-source projects are available for object detection,
-[Detectron2](https://github.com/facebookresearch/detectron2) (from Facebook Research) is chosen in this project for fast inference and the availability of model-zoo. Three models (Mask-RCNN, RetinatNet, Keypoint-RCNN) are included by name in the `detect.py` code file. 
+The code is written in python (version 3.7.9) and PyTorch (version 1.7.1) is utilized. Although a lot of open-source projects are available for object detection,
+[Detectron2](https://github.com/facebookresearch/detectron2) (from Facebook Research) is chosen in this project for fast inference and the ready availability of a model-zoo. Three models (Mask-RCNN, RetinatNet, Keypoint-RCNN) are included by name in the `detect.py` code file. This code was run in Ubuntu 20.04 system with Nvidia-RTX2070 GPU card and cuda version 11.0.
 
 
 ## Installation and Inference:
@@ -39,4 +39,4 @@ This will output the processed video with humans detected in every frame.
 
 ## Observations and future developments:
 
-Most of these models for object detection trade accuracy for speed. In this repository only major models except YOLO versions can be explored. In addition to detection in separate frames, what could be interesting is human tracking/persistence. This could be useful in several cases when you have to monitor each individual separately. Future projects can explore the [models](https://blog.netcetera.com/object-detection-and-tracking-in-2020-f10fb6ff9af3) in this domain such as Deep SORT, ROLO and Tracktor++
+Most of these models for object detection trade accuracy for speed. In this repository major models for object detection except YOLO and SSD versions can be explored. In addition to detection in separate frames, an interesting direction is human tracking/persistence. This could be useful in several scenarios where monitoring each individual separately is required. Future projects can explore the [models](https://blog.netcetera.com/object-detection-and-tracking-in-2020-f10fb6ff9af3) in this domain such as Deep SORT, ROLO and Tracktor++.

@@ -43,14 +43,15 @@ class HumanDetection:
             self.cap = cv2.VideoCapture(self.source)
         else:
             try:
-                requests.get(self.source, stream=True)
                 file_name = "input.mp4"
+                self.source = self.source.replace('open', 'uc')
+                print(self.source)
                 print( "\nDownloading video file from drive link: %s\n"%file_name)
-                gdown.download(source, file_name,  quiet=False)
+                gdown.download(self.source, file_name,  quiet=False)
                 print( "%s downloaded!\n"%file_name )
                 self.cap = cv2.VideoCapture(file_name)
             except:
-                print("Invalid source input, please specify a Google drive link or a downloaded local file as input")
+                print("Invalid source input, please specify a Google drive link or a downloaded local file as input \n")
 
 
         assert self.cap.isOpened(), "Failed to open %s" % self.source
@@ -184,22 +185,22 @@ class HumanDetection:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--library', type=str, default='detectron2', help='name of the library to use for detection: (yolov5 or detectron2')
-    # parser.add_argument('--library', type=str, default='yolov5', help='name of the library to use for detection: (yolov5 or detectron2')
+    # parser.add_argument('--library', type=str, default='detectron2', help='name of the library to use for detection: (yolov5 or detectron2')
+    parser.add_argument('--library', type=str, default='yolov5', help='name of the library to use for detection: (yolov5 or detectron2')
 
     # dectecron2 models:
-    parser.add_argument('--model_name', type=str, default='COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml', help='name of the mdoel')
+    # parser.add_argument('--model_name', type=str, default='COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml', help='name of the mdoel')
     # parser.add_argument('--model_name', type=str, default='"COCO-Detection/retinanet_R_50_FPN_3x.yaml"', help='name of the mdoel')
     # parser.add_argument('--model_name', type=str, default='COCO-Keypoints/keypoint_rcnn_R_101_FPN_3x.yaml', help='name of the mdoel')
     # For a list of all models available in detectron2:
     # https://github.com/facebookresearch/detectron2/blob/e49c7882468229b98135a9ecc57aad6c38fea0a0/detectron2/model_zoo/model_zoo.py
 
     # yolov5 models:
-    # parser.add_argument('--model_name', type=str, default='yolov5s', help='name of the mdoel')
+    parser.add_argument('--model_name', type=str, default='yolov5s', help='name of the mdoel')
     # For a list of all models available in yolov5:
     # https://github.com/ultralytics/yolov5
 
-    parser.add_argument('--source', type=str, default='https://drive.google.com/uc?id=1L0ee-kdtwayN-tlCzXyWVUCqOGwmLj_A', help='source file path or url link')  # input file/folder, 0 for webcam
+    parser.add_argument('--source', type=str, default='https://drive.google.com/open?id=1L0ee-kdtwayN-tlCzXyWVUCqOGwmLj_A', help='source file path or url link')  # input file/folder, 0 for webcam
     parser.add_argument('--output_file', type=str, default='output.mp4', help='output file path')  # output folder
     parser.add_argument('--label_file', type=str, default='coco-labels-paper.txt', help='output folder')  # output folder
     parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')

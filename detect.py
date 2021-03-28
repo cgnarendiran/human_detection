@@ -143,6 +143,10 @@ class HumanDetection:
         # build the writer with same attributes:
         self.vid_writer = cv2.VideoWriter(self.output, self.fourcc, self.fps, (self.w, self.h))
 
+        # inference time:
+        start = time.time()
+        print("Started inference\n")
+        
         # progress bar using tqdm:
         pbar = tqdm(total=self.nframes)
 
@@ -181,6 +185,8 @@ class HumanDetection:
         # release the video capture object and write object:
         self.cap.release()
         self.vid_writer.release()
+
+        print("Inferene on the video file took %0.3f seconds"%(time.time()-start))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

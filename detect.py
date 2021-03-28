@@ -45,13 +45,12 @@ class HumanDetection:
             try:
                 file_name = "input.mp4"
                 self.source = self.source.replace('open', 'uc')
-                print(self.source)
-                print( "\nDownloading video file from drive link: %s\n"%file_name)
+                print( "\nDownloading video file from drive link to %s\n"%file_name)
                 gdown.download(self.source, file_name,  quiet=False)
                 print( "%s downloaded!\n"%file_name )
                 self.cap = cv2.VideoCapture(file_name)
-            except:
-                print("Invalid source input, please specify a Google drive link or a downloaded local file as input \n")
+            except Exception:
+                raise RuntimeError("Invalid source input, please specify a Google drive link or a downloaded local file as input \n")
 
 
         assert self.cap.isOpened(), "Failed to open %s" % self.source
@@ -206,7 +205,7 @@ if __name__ == '__main__':
     parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')
     parser.add_argument('--device', default='cuda:0', help='cuda:device id (i.e. 0 or 0,1) or cpu')
     args = parser.parse_args()
-    print(args)
+    print("Arguments:", args)
 
     pipeline = HumanDetection(args)
     pipeline.detect()

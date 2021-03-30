@@ -157,12 +157,11 @@ class HumanDetection:
             ret, frame = self.cap.read()
             if ret == False:
                 break    # when the last frame is read  
-            
-            # predict and bring the outputs to cpu:
-            results = self.predictor(frame)
 
             # different formats of results:
             if self.library == "yolov5":
+                # predict and bring the outputs to cpu:
+                results = self.predictor(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)) # convert to RGB
                 predictions = results.xyxy[0].cpu()
                 # find the instance indices with person:
                 person_idx = predictions[:,5] == self.label_dict["person"]
@@ -171,6 +170,8 @@ class HumanDetection:
                 probs = predictions[person_idx,4].numpy()
 
             if self.library == "detectron2":
+                # predict and bring the outputs to cpu:
+                results = self.predictor(frame) # RGB conversion done automatically in detectron
                 predictions = results["instances"].to("cpu")
                 # find the instance indices with person:
                 person_idx = [predictions.pred_classes == self.label_dict["person"]]

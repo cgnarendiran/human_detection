@@ -21,6 +21,7 @@ class HumanDetection:
         self.output = args.output_file
         self.model_name = args.model_name
         self.device = args.device
+        self.nms_thresh = args.nms_thresh
         self.library = args.library # yolov5 or detectron
 
         # codec format to store the video: mp4v usually works for mp4:
@@ -73,10 +74,12 @@ class HumanDetection:
         """
         if self.library == "yolov5":
             self.predictor = torch.hub.load('ultralytics/yolov5', self.model_name)
+            self.predictor.iou = self.nms_thresh  # NMS IoU threshold (0-1)
         if self.library == "detectron2":
             cfg = get_cfg()
             cfg.merge_from_file(model_zoo.get_config_file(self.model_name))
             cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
+            cfg.MODEL.NMS_THRESH = self.nms_thresh  # NMS IoU threshold
             cfg.MODEL.DEVICE = self.device
             # Find a model from detectron2's model zoo. You can use the https://dl.fbaipublicfiles... url as well
             cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(self.model_name)
@@ -213,6 +216,7 @@ if __name__ == '__main__':
     parser.add_argument('--label_file', type=str, default='coco-labels-paper.txt', help='output folder')  # output folder
     parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')
     parser.add_argument('--device', default='cuda:0', help='cuda:device id (i.e. 0 or 0,1) or cpu')
+    parser.add_argument('--nms_thresh', type=float, default=0.5, help='Non-maximum supression IoU threshold')
     args = parser.parse_args()
     print("Arguments:", args)
 

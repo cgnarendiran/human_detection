@@ -176,7 +176,10 @@ class HumanDetection:
                 probs = predictions.scores[person_idx].numpy()
 
             # draw boxes and write the frame to the video:
-            box_frame = self.draw_person_boxes(frame, boxes, probs)
+            if len(boxes): # check whether there are predictions
+                box_frame = self.draw_person_boxes(frame, boxes, probs)
+            else:
+                box_frame = frame
             self.vid_writer.write(box_frame)
 
             pbar.update(1)

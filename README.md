@@ -47,3 +47,8 @@ This will output the processed video with humans detected in every frame.
 ## Observations and future developments:
 
 Most of these models for object detection trade accuracy for speed. In this repository some of the major models for object detection are explored. In addition to detection in separate frames, an interesting direction is human tracking/persistence. This could be useful in several scenarios where monitoring each individual separately is required. Future projects can explore the [models](https://blog.netcetera.com/object-detection-and-tracking-in-2020-f10fb6ff9af3) in this domain such as Deep SORT, ROLO and Tracktor++.
+
+## TO-DO:
+1. Multi-threading and buffers for parallel processing
+2. Batch inference? 
+3. Check for any downloadable link and download video

@@ -24,11 +24,24 @@ The code is written in python (version 3.7.9) and PyTorch (version 1.7.1) is uti
 
 `python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'`
 
-5. Run inference with options:
+5. \[Optional, for tracking\] Clone deep_sort_pytorch repo and download weights for tracking:
+
+```
+git clone https://github.com/ZQPei/deep_sort_pytorch.git
+cd deep_sort_pytorch/deep_sort/deep/checkpoint
+```
+download ckpt.t7 from
+https://drive.google.com/drive/folders/1xhG0kRH1EX5B9_Iz8gQJb7UNnn_riXi6 to this folder
+
+```
+cd ../../../../
+```
+
+6. Run inference with options:
 
 ```
 python3 detect.py \
-        --device cuda:0 \
+        --device 0 \
         --library detectron2 \
         --model_name COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml \
         --source https://drive.google.com/open?id=1L0ee-kdtwayN-tlCzXyWVUCqOGwmLj_A
@@ -36,13 +49,21 @@ python3 detect.py \
 or
 ```
 python3 detect.py \
-        --device cuda:0 \
+        --device cpu \
         --library yolov5 \
         --model_name yolov5s \
         --source input.mp4
 ```
+For tracking,
+```
+python3 track.py \
+        --library yolov5 \
+        --model_name yolov5s \
+        --source input.mp4 \
+        --config_deepsort deep_sort_pytorch/configs/deep_sort.yaml
+```
 
-This will output the processed video with humans detected in every frame.
+This will save the output video with humans detected/tracked in every frame.
 
 ## Observations and future developments:
 

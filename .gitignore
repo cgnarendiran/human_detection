@@ -1,5 +1,7 @@
 *.mp4
 *.pt
+*.jpg
 .ipynb_checkpoints*
 *.zip
-__pychache__
+deep_sort_pytorch*
+__pycache__*

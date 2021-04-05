@@ -23,6 +23,7 @@ class HumanDetection:
         self.device = args.device
         self.nms_thresh = args.nms_thresh
         self.library = args.library # yolov5 or detectron
+        self.select_device()
 
         # codec format to store the video: mp4v usually works for mp4:
         self.fourcc = cv2.VideoWriter_fourcc(*args.fourcc)
@@ -30,6 +31,24 @@ class HumanDetection:
         with open(args.label_file) as lf:
             label_list = lf.read().strip("\n").split("\n")
             self.label_dict = {label: i for i, label in enumerate(label_list)}
+
+    def select_device(self):
+
+        if self.device == "cpu":
+            os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # force torch.cuda.is_available() = False
+
+        elif self.device:  # non-cpu device requested
+            os.environ['CUDA_VISIBLE_DEVICES'] = self.device  # set environment variable
+            assert torch.cuda.is_available(), f'CUDA unavailable, invalid device {self.device} requested'  # check availability
+
+        cuda = not self.device == "cpu" and torch.cuda.is_available()
+        if cuda:
+            for d in self.device.split(','):
+                p = torch.cuda.get_device_properties(int(d))
+                print("Using cuda device", p.name, "\n")
+        else: 
+            print("Using CPU \n")
+        return torch.device('cuda:0' if cuda else 'cpu')
 
     def process_video(self):
         """
@@ -80,7 +99,7 @@ class HumanDetection:
             cfg.merge_from_file(model_zoo.get_config_file(self.model_name))
             cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
             cfg.MODEL.NMS_THRESH = self.nms_thresh  # NMS IoU threshold
-            cfg.MODEL.DEVICE = self.device
+            if self.device == "cpu": cfg.MODEL.DEVICE = self.device
             # Find a model from detectron2's model zoo. You can use the https://dl.fbaipublicfiles... url as well
             cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(self.model_name)
             self.predictor = DefaultPredictor(cfg)
@@ -131,10 +150,6 @@ class HumanDetection:
         Returns:
             None
         """
-
-        # set the device used for inference:
-        torch.device(self.device)
-
         # process the input video and get the attributes:
         self.process_video()
 
@@ -197,18 +212,17 @@ class HumanDetection:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    # parser.add_argument('--library', type=str, default='detectron2', help='name of the library to use for detection: (yolov5 or detectron2')
-    parser.add_argument('--library', type=str, default='yolov5', help='name of the library to use for detection: (yolov5 or detectron2')
-
     # dectecron2 models:
-    # parser.add_argument('--model_name', type=str, default='COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml', help='name of the mdoel')
+    parser.add_argument('--library', type=str, default='detectron2', help='name of the library to use for detection: (yolov5 or detectron2')
+    parser.add_argument('--model_name', type=str, default='COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml', help='name of the mdoel')
     # parser.add_argument('--model_name', type=str, default='"COCO-Detection/retinanet_R_50_FPN_3x.yaml"', help='name of the mdoel')
     # parser.add_argument('--model_name', type=str, default='COCO-Keypoints/keypoint_rcnn_R_101_FPN_3x.yaml', help='name of the mdoel')
     # For a list of all models available in detectron2:
     # https://github.com/facebookresearch/detectron2/blob/e49c7882468229b98135a9ecc57aad6c38fea0a0/detectron2/model_zoo/model_zoo.py
 
     # yolov5 models:
-    parser.add_argument('--model_name', type=str, default='yolov5s', help='name of the mdoel')
+    # parser.add_argument('--library', type=str, default='yolov5', help='name of the library to use for detection: (yolov5 or detectron2')
+    # parser.add_argument('--model_name', type=str, default='yolov5s', help='name of the mdoel')
     # For a list of all models available in yolov5:
     # https://github.com/ultralytics/yolov5
 
@@ -216,7 +230,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_file', type=str, default='output.mp4', help='output file path')  # output folder
     parser.add_argument('--label_file', type=str, default='coco-labels-paper.txt', help='output folder')  # output folder
     parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')
-    parser.add_argument('--device', default='cuda:0', help='cuda:device id (i.e. 0 or 0,1) or cpu')
+    parser.add_argument('--device', default='0', help='cuda device id (i.e. 0 or 0,1) or cpu')
     parser.add_argument('--nms_thresh', type=float, default=0.5, help='Non-maximum supression IoU threshold')
     args = parser.parse_args()
     print("Arguments:", args)
